@@ -18,6 +18,7 @@ import com.example.cooperativegig.presentation.customer.CustomerMainScreen
 import com.example.cooperativegig.presentation.customer.booking.BookingTrackingScreen
 import com.example.cooperativegig.presentation.customer.booking.CreateBookingScreen
 import com.example.cooperativegig.presentation.customer.booking.EmergencyServiceScreen
+import com.example.cooperativegig.presentation.customer.notification.NotificationCenterScreen
 import com.example.cooperativegig.presentation.customer.payment.PaymentScreen
 import com.example.cooperativegig.presentation.customer.rating.RatingScreen
 import com.example.cooperativegig.presentation.customer.service.ServiceDetailScreen
@@ -227,6 +228,14 @@ fun AppNavigation(
                     navController.navigate("customer_home") {
                         popUpTo("customer_home") { inclusive = true }
                     }
+                }
+            )
+        }
+
+        composable("notifications") {
+            NotificationCenterScreen(
+                onBack = {
+                    navController.popBackStack()
                 }
             )
         }
