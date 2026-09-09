@@ -2,7 +2,6 @@ package com.example.cooperativegig.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -10,7 +9,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.cooperativegig.presentation.admin.AdminDashboardScreen
-import com.example.cooperativegig.presentation.auth.AuthUiState
 import com.example.cooperativegig.presentation.auth.AuthViewModel
 import com.example.cooperativegig.presentation.auth.AuthViewModelFactory
 import com.example.cooperativegig.presentation.auth.LoginScreen
@@ -22,6 +20,7 @@ import com.example.cooperativegig.presentation.customer.booking.CreateBookingScr
 import com.example.cooperativegig.presentation.customer.payment.PaymentScreen
 import com.example.cooperativegig.presentation.customer.rating.RatingScreen
 import com.example.cooperativegig.presentation.customer.service.ServiceDetailScreen
+import com.example.cooperativegig.presentation.customer.worker.WorkerDetailScreen
 import com.example.cooperativegig.presentation.worker.WorkerMainScreen
 import com.example.cooperativegig.presentation.worker.verification.WorkerVerificationScreen
 
@@ -122,6 +121,25 @@ fun AppNavigation(
                 serviceId = serviceId,
                 onBookNow = { id ->
                     navController.navigate("create_booking/$id")
+                },
+                onWorkerClick = { workerId ->
+                    navController.navigate("worker_detail/$workerId")
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = "worker_detail/{workerId}",
+            arguments = listOf(navArgument("workerId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val workerId = backStackEntry.arguments?.getString("workerId") ?: "w1"
+            WorkerDetailScreen(
+                workerId = workerId,
+                onBookWorker = {
+                    navController.navigate("create_booking/1")
                 },
                 onBack = {
                     navController.popBackStack()
