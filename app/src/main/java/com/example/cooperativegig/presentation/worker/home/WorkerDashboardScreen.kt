@@ -5,7 +5,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,11 +31,29 @@ fun WorkerDashboardScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(
-            text = "Worker Dashboard",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
+        // Header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = "Good morning, Ramesh 👋",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Verified, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "South Delhi Labor Cooperative #12",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -44,104 +64,153 @@ fun WorkerDashboardScreen(
                 }
             }
             is WorkerUiState.Success -> {
-                // Availability Banner
-                ElevatedCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp)
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(bottom = 24.dp)
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text(
-                                text = if (state.isAvailable) "You are ONLINE" else "You are OFFLINE",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = if (state.isAvailable) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+                    // Availability Switch Banner
+                    item {
+                        ElevatedCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.elevatedCardColors(
+                                containerColor = if (state.isAvailable) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
                             )
-                            Text(
-                                text = if (state.isAvailable) "Ready to receive gig requests" else "Turn on to accept new requests",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-                        Switch(
-                            checked = state.isAvailable,
-                            onCheckedChange = { viewModel.toggleAvailability(it) }
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Stats Cards
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    ElevatedCard(modifier = Modifier.weight(1f)) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text("Total Earnings", style = MaterialTheme.typography.labelMedium)
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text("₹${state.worker.totalEarnings}", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                        }
-                    }
-
-                    ElevatedCard(modifier = Modifier.weight(1f)) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text("Rating", style = MaterialTheme.typography.labelMedium)
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Star, contentDescription = "Rating", tint = Color(0xFFFFB800), modifier = Modifier.size(20.dp))
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text("${state.worker.rating}", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = if (state.isAvailable) "You are AVAILABLE" else "You are OFFLINE",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = if (state.isAvailable) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = if (state.isAvailable) "Receiving nearby trade requests" else "Turn on to accept new cooperative bookings",
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                                Switch(
+                                    checked = state.isAvailable,
+                                    onCheckedChange = { viewModel.toggleAvailability(it) }
+                                )
                             }
                         }
                     }
-                }
 
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Text("Incoming Requests", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                // Sample Request List
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth().weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
+                    // Daily Dashboard Metrics Grid
                     item {
-                        Card(modifier = Modifier.fillMaxWidth()) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            ElevatedCard(modifier = Modifier.weight(1f), shape = RoundedCornerShape(16.dp)) {
+                                Column(modifier = Modifier.padding(16.dp)) {
+                                    Text("Today's Earnings", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text("₹${state.worker.totalEarnings.toInt()}", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                                }
+                            }
+
+                            ElevatedCard(modifier = Modifier.weight(1f), shape = RoundedCornerShape(16.dp)) {
+                                Column(modifier = Modifier.padding(16.dp)) {
+                                    Text("Rating", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(Icons.Default.Star, contentDescription = "Rating", tint = Color(0xFFD97706), modifier = Modifier.size(20.dp))
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("${state.worker.rating}", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Job Stats Row
+                    item {
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            OutlinedCard(modifier = Modifier.weight(1f), shape = RoundedCornerShape(12.dp)) {
+                                Column(modifier = Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text("Completed Today", style = MaterialTheme.typography.labelSmall)
+                                    Text("3 Gigs", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                }
+                            }
+                            OutlinedCard(modifier = Modifier.weight(1f), shape = RoundedCornerShape(12.dp)) {
+                                Column(modifier = Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text("Pending Requests", style = MaterialTheme.typography.labelSmall)
+                                    Text("1 Request", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.error)
+                                }
+                            }
+                        }
+                    }
+
+                    // Incoming Service Requests
+                    item {
+                        Text("Incoming Service Requests", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    }
+
+                    item {
+                        ElevatedCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text("Plumbing Emergency", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-                                    Badge(containerColor = MaterialTheme.colorScheme.errorContainer) {
-                                        Text("EMERGENCY", color = MaterialTheme.colorScheme.onErrorContainer)
+                                    Text("Plumbing Emergency Request", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
+                                    Surface(
+                                        color = MaterialTheme.colorScheme.errorContainer,
+                                        shape = RoundedCornerShape(8.dp)
+                                    ) {
+                                        Text("HIGH PRIORITY", color = MaterialTheme.colorScheme.onErrorContainer, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp))
                                     }
                                 }
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.LocationOn, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text("Sector 4, Dwarka (1.2 km away)", style = MaterialTheme.typography.bodySmall)
+                                }
+
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text("Location: Sector 4, Community Block B", style = MaterialTheme.typography.bodyMedium)
-                                Text("Distance: 1.2 km away", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
+                                Text("Problem: Severe water leak in main pipeline under sink.", style = MaterialTheme.typography.bodyMedium)
 
                                 Spacer(modifier = Modifier.height(12.dp))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text("Est. Fee: ₹399", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                                    Text("Schedule: Immediate", style = MaterialTheme.typography.labelMedium)
+                                }
+
+                                Spacer(modifier = Modifier.height(16.dp))
 
                                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                     Button(
                                         onClick = { },
-                                        modifier = Modifier.weight(1f)
+                                        modifier = Modifier.weight(1f),
+                                        shape = RoundedCornerShape(12.dp)
                                     ) {
+                                        Icon(Icons.Default.CheckCircle, contentDescription = null, modifier = Modifier.size(18.dp))
+                                        Spacer(modifier = Modifier.width(6.dp))
                                         Text("Accept")
                                     }
                                     OutlinedButton(
                                         onClick = { },
-                                        modifier = Modifier.weight(1f)
+                                        modifier = Modifier.weight(1f),
+                                        shape = RoundedCornerShape(12.dp)
                                     ) {
                                         Text("Decline")
                                     }
