@@ -1,10 +1,10 @@
-package com.example.cooperativegig
+package com.example.cooperativegig.core.network
 
+import com.example.cooperativegig.BuildConfig
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 
 object SupabaseClient {
-
     val client = createSupabaseClient(
         supabaseUrl = BuildConfig.SUPABASE_URL,
         supabaseKey = BuildConfig.SUPABASE_PUBLISHABLE_KEY
