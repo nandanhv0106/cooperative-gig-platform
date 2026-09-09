@@ -24,12 +24,18 @@ import com.example.cooperativegig.presentation.auth.AuthViewModel
 @Composable
 fun CustomerProfileScreen(
     authViewModel: AuthViewModel,
+    onEditProfileClick: () -> Unit = {},
+    onSavedAddressesClick: () -> Unit = {},
+    onBookingHistoryClick: () -> Unit = {},
+    onSavedWorkersClick: () -> Unit = {},
+    onMyReviewsClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
     onLogout: () -> Unit
 ) {
     val uiState by authViewModel.uiState.collectAsStateWithLifecycle()
     val profile = (uiState as? AuthUiState.Authenticated)?.profile
 
-    val userName = if (!profile?.firstName.isNullOrBlank()) "${profile?.firstName} ${profile?.lastName ?: ""}" else "Nandan"
+    val userName = if (profile != null && !profile.firstName.isNullOrBlank()) "${profile.firstName} ${profile.lastName ?: ""}" else "Nandan"
     val userEmail = "nandan.customer@strata.org"
 
     Column(
@@ -46,7 +52,7 @@ fun CustomerProfileScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(bottom = 24.dp)
         ) {
-            // Profile Header
+            // Profile Header Card
             item {
                 ElevatedCard(
                     modifier = Modifier.fillMaxWidth(),
@@ -97,7 +103,7 @@ fun CustomerProfileScreen(
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(
-                                        text = "Verified Customer",
+                                        text = "Verified Customer Account",
                                         style = MaterialTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary
@@ -115,11 +121,11 @@ fun CustomerProfileScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
                     Column {
-                        ProfileOptionRow(icon = Icons.Default.Edit, title = "Edit Profile Info") { }
-                        Divider(modifier = Modifier.padding(horizontal = 16.dp))
-                        ProfileOptionRow(icon = Icons.Default.Phone, title = "Phone Number", value = "+91 98765 43210") { }
-                        Divider(modifier = Modifier.padding(horizontal = 16.dp))
-                        ProfileOptionRow(icon = Icons.Default.LocationOn, title = "Saved Delivery Addresses", value = "2 Addresses") { }
+                        ProfileOptionRow(icon = Icons.Default.Edit, title = "Edit Profile Info", onClick = onEditProfileClick)
+                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                        ProfileOptionRow(icon = Icons.Default.Phone, title = "Phone Number", value = "+91 98765 43210", onClick = onEditProfileClick)
+                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                        ProfileOptionRow(icon = Icons.Default.LocationOn, title = "Saved Delivery Addresses", value = "2 Addresses", onClick = onSavedAddressesClick)
                     }
                 }
             }
@@ -130,28 +136,28 @@ fun CustomerProfileScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
                     Column {
-                        ProfileOptionRow(icon = Icons.Default.History, title = "Booking History") { }
-                        Divider(modifier = Modifier.padding(horizontal = 16.dp))
-                        ProfileOptionRow(icon = Icons.Default.Bookmark, title = "Saved Cooperative Workers") { }
-                        Divider(modifier = Modifier.padding(horizontal = 16.dp))
-                        ProfileOptionRow(icon = Icons.Default.Star, title = "My Feedback & Reviews") { }
+                        ProfileOptionRow(icon = Icons.Default.History, title = "Booking History", onClick = onBookingHistoryClick)
+                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                        ProfileOptionRow(icon = Icons.Default.Bookmark, title = "Saved Cooperative Workers", onClick = onSavedWorkersClick)
+                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                        ProfileOptionRow(icon = Icons.Default.Star, title = "My Feedback & Reviews", onClick = onMyReviewsClick)
                     }
                 }
             }
 
             // Settings & Preferences
             item {
-                Text("App Preferences", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                Text("App Preferences & Settings", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                 Spacer(modifier = Modifier.height(8.dp))
                 Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
                     Column {
-                        ProfileOptionRow(icon = Icons.Default.Notifications, title = "Notification Preferences") { }
-                        Divider(modifier = Modifier.padding(horizontal = 16.dp))
-                        ProfileOptionRow(icon = Icons.Default.Language, title = "App Language", value = "English (IN)") { }
-                        Divider(modifier = Modifier.padding(horizontal = 16.dp))
-                        ProfileOptionRow(icon = Icons.Default.DarkMode, title = "Appearance & Dark Theme", value = "System Default") { }
-                        Divider(modifier = Modifier.padding(horizontal = 16.dp))
-                        ProfileOptionRow(icon = Icons.Default.Help, title = "Help, Support & Cooperative Policy") { }
+                        ProfileOptionRow(icon = Icons.Default.Notifications, title = "Notification Preferences", onClick = onSettingsClick)
+                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                        ProfileOptionRow(icon = Icons.Default.Language, title = "App Language", value = "English (IN)", onClick = onSettingsClick)
+                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                        ProfileOptionRow(icon = Icons.Default.DarkMode, title = "Appearance & Dark Theme", value = "System Default", onClick = onSettingsClick)
+                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                        ProfileOptionRow(icon = Icons.Default.HelpOutline, title = "Help, Support & Policy", onClick = onSettingsClick)
                     }
                 }
             }

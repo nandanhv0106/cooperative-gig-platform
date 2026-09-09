@@ -20,6 +20,11 @@ import com.example.cooperativegig.presentation.customer.booking.CreateBookingScr
 import com.example.cooperativegig.presentation.customer.booking.EmergencyServiceScreen
 import com.example.cooperativegig.presentation.customer.notification.NotificationCenterScreen
 import com.example.cooperativegig.presentation.customer.payment.PaymentScreen
+import com.example.cooperativegig.presentation.customer.profile.CustomerReviewsScreen
+import com.example.cooperativegig.presentation.customer.profile.EditProfileScreen
+import com.example.cooperativegig.presentation.customer.profile.SavedAddressesScreen
+import com.example.cooperativegig.presentation.customer.profile.SavedWorkersScreen
+import com.example.cooperativegig.presentation.customer.profile.SettingsPreferencesScreen
 import com.example.cooperativegig.presentation.customer.rating.RatingScreen
 import com.example.cooperativegig.presentation.customer.service.ServiceDetailScreen
 import com.example.cooperativegig.presentation.customer.worker.WorkerDetailScreen
@@ -103,13 +108,80 @@ fun AppNavigation(
                 onNavigateToServiceDetail = { serviceId ->
                     navController.navigate("service_detail/$serviceId")
                 },
+                onNavigateToWorkerDetail = { workerId ->
+                    navController.navigate("worker_detail/$workerId")
+                },
                 onNavigateToEmergencyBooking = {
                     navController.navigate("emergency_booking")
+                },
+                onNavigateToNotifications = {
+                    navController.navigate("notifications")
+                },
+                onNavigateToEditProfile = {
+                    navController.navigate("edit_profile")
+                },
+                onNavigateToSavedAddresses = {
+                    navController.navigate("saved_addresses")
+                },
+                onNavigateToSavedWorkers = {
+                    navController.navigate("saved_workers")
+                },
+                onNavigateToCustomerReviews = {
+                    navController.navigate("customer_reviews")
+                },
+                onNavigateToSettingsPreferences = {
+                    navController.navigate("settings_preferences")
                 },
                 onLogout = {
                     navController.navigate("login") {
                         popUpTo("customer_home") { inclusive = true }
                     }
+                }
+            )
+        }
+
+        composable("edit_profile") {
+            EditProfileScreen(
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable("saved_addresses") {
+            SavedAddressesScreen(
+                onSelectOnMapClick = {
+                    // Location/map selector
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable("saved_workers") {
+            SavedWorkersScreen(
+                onWorkerClick = { workerId ->
+                    navController.navigate("worker_detail/$workerId")
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable("customer_reviews") {
+            CustomerReviewsScreen(
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable("settings_preferences") {
+            SettingsPreferencesScreen(
+                onBack = {
+                    navController.popBackStack()
                 }
             )
         }

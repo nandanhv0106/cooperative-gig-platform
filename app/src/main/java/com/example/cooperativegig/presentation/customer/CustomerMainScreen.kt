@@ -28,7 +28,14 @@ sealed class CustomerBottomNavItem(val route: String, val title: String, val ico
 fun CustomerMainScreen(
     authViewModel: AuthViewModel,
     onNavigateToServiceDetail: (Long) -> Unit,
+    onNavigateToWorkerDetail: (String) -> Unit = {},
     onNavigateToEmergencyBooking: () -> Unit,
+    onNavigateToNotifications: () -> Unit = {},
+    onNavigateToEditProfile: () -> Unit = {},
+    onNavigateToSavedAddresses: () -> Unit = {},
+    onNavigateToSavedWorkers: () -> Unit = {},
+    onNavigateToCustomerReviews: () -> Unit = {},
+    onNavigateToSettingsPreferences: () -> Unit = {},
     onLogout: () -> Unit
 ) {
     val navController = rememberNavController()
@@ -71,15 +78,47 @@ fun CustomerMainScreen(
             composable(CustomerBottomNavItem.Home.route) {
                 CustomerHomeScreen(
                     onServiceClick = onNavigateToServiceDetail,
-                    onEmergencyClick = onNavigateToEmergencyBooking
+                    onEmergencyClick = onNavigateToEmergencyBooking,
+                    onWorkerClick = onNavigateToWorkerDetail,
+                    onNotificationClick = onNavigateToNotifications,
+                    onProfileClick = {
+                        navController.navigate(CustomerBottomNavItem.Profile.route) {
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
                 )
             }
             composable(CustomerBottomNavItem.Bookings.route) {
-                BookingHistoryScreen()
+                BookingHistoryScreen(
+                    onBookingClick = { bookingId ->
+                        // Navigate to tracking
+                    },
+                    onExploreServicesClick = {
+                        navController.navigate(CustomerBottomNavItem.Home.route) {
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
             }
             composable(CustomerBottomNavItem.Profile.route) {
                 CustomerProfileScreen(
                     authViewModel = authViewModel,
+                    onEditProfileClick = onNavigateToEditProfile,
+                    onSavedAddressesClick = onNavigateToSavedAddresses,
+                    onBookingHistoryClick = {
+                        navController.navigate(CustomerBottomNavItem.Bookings.route) {
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onSavedWorkersClick = onNavigateToSavedWorkers,
+                    onMyReviewsClick = onNavigateToCustomerReviews,
+                    onSettingsClick = onNavigateToSettingsPreferences,
                     onLogout = onLogout
                 )
             }

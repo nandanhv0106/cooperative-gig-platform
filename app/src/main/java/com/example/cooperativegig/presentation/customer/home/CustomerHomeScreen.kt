@@ -47,7 +47,10 @@ val sampleWorkers = listOf(
 fun CustomerHomeScreen(
     viewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory()),
     onServiceClick: (Long) -> Unit,
-    onEmergencyClick: () -> Unit
+    onEmergencyClick: () -> Unit,
+    onWorkerClick: (String) -> Unit = {},
+    onNotificationClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var searchQuery by remember { mutableStateOf("") }
@@ -62,8 +65,8 @@ fun CustomerHomeScreen(
             userName = "Nandan",
             location = "Sector 4, Dwarka, New Delhi",
             onLocationClick = { },
-            onNotificationClick = { },
-            onProfileClick = { }
+            onNotificationClick = onNotificationClick,
+            onProfileClick = onProfileClick
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -184,7 +187,7 @@ fun CustomerHomeScreen(
                     items(sampleWorkers) { worker ->
                         WorkerCard(
                             worker = worker,
-                            onBookClick = { onServiceClick(1L) }
+                            onBookClick = { onWorkerClick(worker.id) }
                         )
                     }
                 }
