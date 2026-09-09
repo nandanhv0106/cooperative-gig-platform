@@ -16,6 +16,7 @@ import androidx.navigation.navArgument
 import com.example.cooperativegig.presentation.customer.CustomerMainScreen
 import com.example.cooperativegig.presentation.customer.booking.CreateBookingScreen
 import com.example.cooperativegig.presentation.customer.service.ServiceDetailScreen
+import com.example.cooperativegig.presentation.worker.WorkerMainScreen
 import com.example.cooperativegig.presentation.worker.home.WorkerHomeScreen
 
 @Composable
@@ -153,7 +154,14 @@ fun AppNavigation(
         }
 
         composable("worker_home") {
-            WorkerHomeScreen()
+            WorkerMainScreen(
+                authViewModel = authViewModel,
+                onLogout = {
+                    navController.navigate("login") {
+                        popUpTo("worker_home") { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }
