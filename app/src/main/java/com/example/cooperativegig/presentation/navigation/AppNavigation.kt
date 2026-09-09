@@ -18,6 +18,7 @@ import com.example.cooperativegig.presentation.customer.booking.CreateBookingScr
 import com.example.cooperativegig.presentation.customer.service.ServiceDetailScreen
 import com.example.cooperativegig.presentation.worker.WorkerMainScreen
 import com.example.cooperativegig.presentation.worker.home.WorkerHomeScreen
+import com.example.cooperativegig.presentation.worker.verification.WorkerVerificationScreen
 
 @Composable
 fun AppNavigation(
@@ -156,10 +157,21 @@ fun AppNavigation(
         composable("worker_home") {
             WorkerMainScreen(
                 authViewModel = authViewModel,
+                onNavigateToVerification = {
+                    navController.navigate("worker_verification")
+                },
                 onLogout = {
                     navController.navigate("login") {
                         popUpTo("worker_home") { inclusive = true }
                     }
+                }
+            )
+        }
+
+        composable("worker_verification") {
+            WorkerVerificationScreen(
+                onBack = {
+                    navController.popBackStack()
                 }
             )
         }

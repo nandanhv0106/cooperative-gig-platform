@@ -21,6 +21,7 @@ import com.example.cooperativegig.presentation.worker.WorkerViewModel
 fun WorkerProfileScreen(
     authViewModel: AuthViewModel,
     workerViewModel: WorkerViewModel,
+    onNavigateToVerification: () -> Unit,
     onLogout: () -> Unit
 ) {
     val uiState by workerViewModel.uiState.collectAsStateWithLifecycle()
@@ -75,6 +76,15 @@ fun WorkerProfileScreen(
                         Text(text = "Active Policy: Gig Worker Health & Accident Scheme", style = MaterialTheme.typography.bodyMedium)
                         Text(text = "Coverage: ₹2,00,000 Medical Insurance", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSecondaryContainer)
                     }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedButton(
+                    onClick = onNavigateToVerification,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Upload Verification Documents")
                 }
             }
             else -> {}

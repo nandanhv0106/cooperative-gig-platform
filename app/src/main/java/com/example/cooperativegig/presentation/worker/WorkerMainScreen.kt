@@ -27,6 +27,7 @@ sealed class WorkerBottomNavItem(val route: String, val title: String, val icon:
 @Composable
 fun WorkerMainScreen(
     authViewModel: AuthViewModel,
+    onNavigateToVerification: () -> Unit,
     onLogout: () -> Unit
 ) {
     val navController = rememberNavController()
@@ -75,6 +76,7 @@ fun WorkerMainScreen(
                 WorkerProfileScreen(
                     authViewModel = authViewModel,
                     workerViewModel = workerViewModel,
+                    onNavigateToVerification = onNavigateToVerification,
                     onLogout = onLogout
                 )
             }
