@@ -49,6 +49,8 @@ fun CustomerHomeScreen(
     onServiceClick: (Long) -> Unit,
     onEmergencyClick: () -> Unit,
     onWorkerClick: (String) -> Unit = {},
+    onLocationClick: () -> Unit = {},
+    onNearbyMapClick: () -> Unit = {},
     onNotificationClick: () -> Unit = {},
     onProfileClick: () -> Unit = {}
 ) {
@@ -64,7 +66,7 @@ fun CustomerHomeScreen(
         StrataHeader(
             userName = "Nandan",
             location = "Sector 4, Dwarka, New Delhi",
-            onLocationClick = { },
+            onLocationClick = { onLocationClick() },
             onNotificationClick = onNotificationClick,
             onProfileClick = onProfileClick
         )
@@ -176,8 +178,8 @@ fun CustomerHomeScreen(
                 SectionHeader(
                     title = "Nearby Verified Workers",
                     subtitle = "Experienced cooperative members near you",
-                    actionLabel = "View All",
-                    onActionClick = { }
+                    actionLabel = "View Map",
+                    onActionClick = onNearbyMapClick
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 LazyRow(

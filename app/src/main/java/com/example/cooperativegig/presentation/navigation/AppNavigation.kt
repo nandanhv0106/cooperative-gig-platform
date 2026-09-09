@@ -18,6 +18,8 @@ import com.example.cooperativegig.presentation.customer.CustomerMainScreen
 import com.example.cooperativegig.presentation.customer.booking.BookingTrackingScreen
 import com.example.cooperativegig.presentation.customer.booking.CreateBookingScreen
 import com.example.cooperativegig.presentation.customer.booking.EmergencyServiceScreen
+import com.example.cooperativegig.presentation.customer.location.NearbyWorkersMapScreen
+import com.example.cooperativegig.presentation.customer.location.SelectLocationScreen
 import com.example.cooperativegig.presentation.customer.notification.NotificationCenterScreen
 import com.example.cooperativegig.presentation.customer.payment.PaymentScreen
 import com.example.cooperativegig.presentation.customer.profile.CustomerReviewsScreen
@@ -114,6 +116,12 @@ fun AppNavigation(
                 onNavigateToEmergencyBooking = {
                     navController.navigate("emergency_booking")
                 },
+                onNavigateToSelectLocation = {
+                    navController.navigate("select_location")
+                },
+                onNavigateToNearbyMap = {
+                    navController.navigate("nearby_workers_map")
+                },
                 onNavigateToNotifications = {
                     navController.navigate("notifications")
                 },
@@ -140,6 +148,28 @@ fun AppNavigation(
             )
         }
 
+        composable("select_location") {
+            SelectLocationScreen(
+                onLocationConfirmed = { address, lat, lng ->
+                    navController.popBackStack()
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable("nearby_workers_map") {
+            NearbyWorkersMapScreen(
+                onWorkerSelect = { workerId ->
+                    navController.navigate("worker_detail/$workerId")
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
         composable("edit_profile") {
             EditProfileScreen(
                 onBack = {
@@ -151,7 +181,7 @@ fun AppNavigation(
         composable("saved_addresses") {
             SavedAddressesScreen(
                 onSelectOnMapClick = {
-                    // Location/map selector
+                    navController.navigate("select_location")
                 },
                 onBack = {
                     navController.popBackStack()

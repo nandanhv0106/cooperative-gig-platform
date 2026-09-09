@@ -30,6 +30,8 @@ fun CustomerMainScreen(
     onNavigateToServiceDetail: (Long) -> Unit,
     onNavigateToWorkerDetail: (String) -> Unit = {},
     onNavigateToEmergencyBooking: () -> Unit,
+    onNavigateToSelectLocation: () -> Unit = {},
+    onNavigateToNearbyMap: () -> Unit = {},
     onNavigateToNotifications: () -> Unit = {},
     onNavigateToEditProfile: () -> Unit = {},
     onNavigateToSavedAddresses: () -> Unit = {},
@@ -80,6 +82,8 @@ fun CustomerMainScreen(
                     onServiceClick = onNavigateToServiceDetail,
                     onEmergencyClick = onNavigateToEmergencyBooking,
                     onWorkerClick = onNavigateToWorkerDetail,
+                    onLocationClick = onNavigateToSelectLocation,
+                    onNearbyMapClick = onNavigateToNearbyMap,
                     onNotificationClick = onNavigateToNotifications,
                     onProfileClick = {
                         navController.navigate(CustomerBottomNavItem.Profile.route) {
