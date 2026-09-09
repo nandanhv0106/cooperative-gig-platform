@@ -17,6 +17,7 @@ import com.example.cooperativegig.presentation.auth.SplashScreen
 import com.example.cooperativegig.presentation.customer.CustomerMainScreen
 import com.example.cooperativegig.presentation.customer.booking.BookingTrackingScreen
 import com.example.cooperativegig.presentation.customer.booking.CreateBookingScreen
+import com.example.cooperativegig.presentation.customer.booking.EmergencyServiceScreen
 import com.example.cooperativegig.presentation.customer.payment.PaymentScreen
 import com.example.cooperativegig.presentation.customer.rating.RatingScreen
 import com.example.cooperativegig.presentation.customer.service.ServiceDetailScreen
@@ -167,10 +168,8 @@ fun AppNavigation(
         }
 
         composable("emergency_booking") {
-            CreateBookingScreen(
-                serviceId = 0L,
-                isEmergency = true,
-                onBookingCreated = { bookingId ->
+            EmergencyServiceScreen(
+                onDispatchRequested = { bookingId ->
                     navController.navigate("booking_tracking/$bookingId") {
                         popUpTo("customer_home") { inclusive = false }
                     }
