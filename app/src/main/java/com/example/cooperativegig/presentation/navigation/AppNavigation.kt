@@ -2,22 +2,27 @@ package com.example.cooperativegig.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.cooperativegig.presentation.admin.AdminDashboardScreen
+import com.example.cooperativegig.presentation.auth.AuthUiState
 import com.example.cooperativegig.presentation.auth.AuthViewModel
 import com.example.cooperativegig.presentation.auth.AuthViewModelFactory
 import com.example.cooperativegig.presentation.auth.LoginScreen
 import com.example.cooperativegig.presentation.auth.RegisterScreen
 import com.example.cooperativegig.presentation.auth.SplashScreen
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
 import com.example.cooperativegig.presentation.customer.CustomerMainScreen
+import com.example.cooperativegig.presentation.customer.booking.BookingTrackingScreen
 import com.example.cooperativegig.presentation.customer.booking.CreateBookingScreen
+import com.example.cooperativegig.presentation.customer.payment.PaymentScreen
+import com.example.cooperativegig.presentation.customer.rating.RatingScreen
 import com.example.cooperativegig.presentation.customer.service.ServiceDetailScreen
 import com.example.cooperativegig.presentation.worker.WorkerMainScreen
-import com.example.cooperativegig.presentation.worker.home.WorkerHomeScreen
 import com.example.cooperativegig.presentation.worker.verification.WorkerVerificationScreen
 
 @Composable
@@ -132,8 +137,10 @@ fun AppNavigation(
             CreateBookingScreen(
                 serviceId = serviceId,
                 isEmergency = false,
-                onBookingCreated = {
-                    navController.popBackStack("customer_home", inclusive = false)
+                onBookingCreated = { bookingId ->
+                    navController.navigate("booking_tracking/$bookingId") {
+                        popUpTo("customer_home") { inclusive = false }
+                    }
                 },
                 onBack = {
                     navController.popBackStack()
@@ -145,11 +152,64 @@ fun AppNavigation(
             CreateBookingScreen(
                 serviceId = 0L,
                 isEmergency = true,
-                onBookingCreated = {
-                    navController.popBackStack("customer_home", inclusive = false)
+                onBookingCreated = { bookingId ->
+                    navController.navigate("booking_tracking/$bookingId") {
+                        popUpTo("customer_home") { inclusive = false }
+                    }
                 },
                 onBack = {
                     navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = "booking_tracking/{bookingId}",
+            arguments = listOf(navArgument("bookingId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val bookingId = backStackEntry.arguments?.getLong("bookingId") ?: 0L
+            BookingTrackingScreen(
+                bookingId = bookingId,
+                onPaymentClick = {
+                    navController.navigate("payment/$bookingId")
+                },
+                onBackHome = {
+                    navController.navigate("customer_home") {
+                        popUpTo("customer_home") { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = "payment/{bookingId}",
+            arguments = listOf(navArgument("bookingId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val bookingId = backStackEntry.arguments?.getLong("bookingId") ?: 0L
+            PaymentScreen(
+                bookingId = bookingId,
+                onPaymentSuccess = {
+                    navController.navigate("rating/$bookingId") {
+                        popUpTo("booking_tracking/$bookingId") { inclusive = true }
+                    }
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = "rating/{bookingId}",
+            arguments = listOf(navArgument("bookingId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val bookingId = backStackEntry.arguments?.getLong("bookingId") ?: 0L
+            RatingScreen(
+                bookingId = bookingId,
+                onSubmitted = {
+                    navController.navigate("customer_home") {
+                        popUpTo("customer_home") { inclusive = true }
+                    }
                 }
             )
         }
@@ -172,6 +232,16 @@ fun AppNavigation(
             WorkerVerificationScreen(
                 onBack = {
                     navController.popBackStack()
+                }
+            )
+        }
+
+        composable("admin_dashboard") {
+            AdminDashboardScreen(
+                onLogout = {
+                    navController.navigate("login") {
+                        popUpTo("admin_dashboard") { inclusive = true }
+                    }
                 }
             )
         }

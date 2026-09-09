@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 fun CreateBookingScreen(
     serviceId: Long,
     isEmergency: Boolean = false,
-    onBookingCreated: () -> Unit,
+    onBookingCreated: (Long) -> Unit,
     onBack: () -> Unit
 ) {
     var location by remember { mutableStateOf("") }
@@ -72,7 +72,7 @@ fun CreateBookingScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = onBookingCreated,
+                onClick = { onBookingCreated(System.currentTimeMillis()) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = if (isEmergency) ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error) else ButtonDefaults.buttonColors()
             ) {
