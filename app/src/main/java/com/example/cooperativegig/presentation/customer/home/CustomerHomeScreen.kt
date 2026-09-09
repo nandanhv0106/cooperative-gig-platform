@@ -1,23 +1,46 @@
 package com.example.cooperativegig.presentation.customer.home
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cooperativegig.data.model.Service
+import com.example.cooperativegig.presentation.components.*
+
+data class ServiceCategoryItem(
+    val name: String,
+    val icon: ImageVector
+)
+
+val defaultCategories = listOf(
+    ServiceCategoryItem("Plumbing", Icons.Default.WaterDrop),
+    ServiceCategoryItem("Electrical", Icons.Default.Bolt),
+    ServiceCategoryItem("Carpentry", Icons.Default.Build),
+    ServiceCategoryItem("Cleaning", Icons.Default.CleaningServices),
+    ServiceCategoryItem("Technician", Icons.Default.Handyman),
+    ServiceCategoryItem("Painting", Icons.Default.FormatPaint),
+    ServiceCategoryItem("Gardening", Icons.Default.Yard),
+    ServiceCategoryItem("Driver", Icons.Default.DirectionsCar),
+    ServiceCategoryItem("Domestic Help", Icons.Default.Home),
+    ServiceCategoryItem("Caregiver", Icons.Default.VolunteerActivism)
+)
+
+val sampleWorkers = listOf(
+    DisplayWorker("w1", "Ramesh Kumar", "Plumber", 4.9, 8, 0.8),
+    DisplayWorker("w2", "Suresh Verma", "Electrician", 4.8, 6, 1.2),
+    DisplayWorker("w3", "Anita Devi", "Cleaning Specialist", 4.9, 5, 1.5),
+    DisplayWorker("w4", "Vikram Singh", "Carpenter", 4.7, 10, 2.1)
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,142 +55,145 @@ fun CustomerHomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
     ) {
+        // Top Header Bar
+        StrataHeader(
+            userName = "Nandan",
+            location = "Sector 4, Dwarka, New Delhi",
+            onLocationClick = { },
+            onNotificationClick = { },
+            onProfileClick = { }
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         // Search Bar
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Search plumbing, electrical, cleaning...") },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-            shape = RoundedCornerShape(24.dp)
+        StrataSearchBar(
+            query = searchQuery,
+            onQueryChange = { searchQuery = it },
+            placeholder = "Search plumbing, electrical, cleaning..."
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Emergency Request Card
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onEmergencyClick() },
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
-            shape = RoundedCornerShape(16.dp)
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(bottom = 24.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Warning,
-                    contentDescription = "Emergency",
-                    tint = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.size(36.dp)
+            // 1. Emergency Service Callout
+            item {
+                EmergencyBanner(
+                    onEmergencyClick = onEmergencyClick
                 )
-                Spacer(modifier = Modifier.width(16.dp))
-                Column {
-                    Text(
-                        text = "Emergency Service Needed?",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                    Text(
-                        text = "Connect with available nearby workers immediately",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                }
             }
-        }
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = "Popular Cooperative Services",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        when (val state = uiState) {
-            is HomeUiState.Loading -> {
-                Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            }
-            is HomeUiState.Success -> {
-                val filteredServices = state.services.filter {
-                    it.name.contains(searchQuery, ignoreCase = true) ||
-                            (it.description?.contains(searchQuery, ignoreCase = true) == true)
-                }
-
-                if (filteredServices.isEmpty()) {
-                    Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                        Text("No services found.")
+            // 2. Service Categories Section
+            item {
+                SectionHeader(
+                    title = "Service Categories",
+                    subtitle = "Book skilled workers from local cooperatives",
+                    actionLabel = "All Categories",
+                    onActionClick = { }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(horizontal = 4.dp)
+                ) {
+                    items(defaultCategories) { cat ->
+                        ServiceCategoryCard(
+                            categoryName = cat.name,
+                            icon = cat.icon,
+                            onClick = {
+                                // Match category to first relevant service
+                            }
+                        )
                     }
-                } else {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier.weight(1f)
-                    ) {
+                }
+            }
+
+            // 3. Popular Services Section (DB-driven)
+            item {
+                SectionHeader(
+                    title = "Popular Services",
+                    subtitle = "Transparent pricing & verified trade experts",
+                    actionLabel = null
+                )
+            }
+
+            when (val state = uiState) {
+                is HomeUiState.Loading -> {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(120.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
+                is HomeUiState.Success -> {
+                    val filteredServices = state.services.filter {
+                        it.name.contains(searchQuery, ignoreCase = true) ||
+                                (it.description?.contains(searchQuery, ignoreCase = true) == true)
+                    }
+
+                    if (filteredServices.isEmpty()) {
+                        item {
+                            EmptyState(
+                                title = "No Services Found",
+                                message = "No cooperative services match \"$searchQuery\"."
+                            )
+                        }
+                    } else {
                         items(filteredServices) { service ->
-                            ServiceCategoryCard(
+                            PopularServiceCard(
                                 service = service,
                                 onClick = { onServiceClick(service.id) }
                             )
                         }
                     }
                 }
-            }
-            is HomeUiState.Error -> {
-                Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = "Error: ${state.message}", color = MaterialTheme.colorScheme.error)
-                        Button(onClick = { viewModel.fetchServices() }, modifier = Modifier.padding(top = 8.dp)) {
-                            Text("Retry")
-                        }
+                is HomeUiState.Error -> {
+                    item {
+                        ErrorState(
+                            message = state.message,
+                            onRetry = { viewModel.fetchServices() }
+                        )
                     }
                 }
             }
-        }
-    }
-}
 
-@Composable
-fun ServiceCategoryCard(
-    service: Service,
-    onClick: () -> Unit
-) {
-    ElevatedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(120.dp)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = service.name,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
-            )
-            Text(
-                text = "From ₹${service.basePrice}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
-            )
+            // 4. Nearby Verified Workers Section
+            item {
+                SectionHeader(
+                    title = "Nearby Verified Workers",
+                    subtitle = "Experienced cooperative members near you",
+                    actionLabel = "View All",
+                    onActionClick = { }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(horizontal = 4.dp)
+                ) {
+                    items(sampleWorkers) { worker ->
+                        WorkerCard(
+                            worker = worker,
+                            onBookClick = { onServiceClick(1L) }
+                        )
+                    }
+                }
+            }
+
+            // 5. Why Choose Cooperative Services Card
+            item {
+                WhyCooperativeCard()
+            }
         }
     }
 }

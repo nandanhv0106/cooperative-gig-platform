@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Cooperative Gig Platform</string>
+    <string name="app_name">Strata Gig Platform</string>
+    <string name="app_tagline">Trusted Workers. Stronger Communities.</string>
 </resources>
